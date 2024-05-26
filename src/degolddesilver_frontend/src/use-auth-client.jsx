@@ -24,7 +24,7 @@ const defaultOptions = {
     identityProvider:
       process.env.DFX_NETWORK === "ic"
         ? "https://identity.ic0.app/#authorize"
-        : `http://bw4dl-smaaa-aaaaa-qaacq-cai.localhost:4943/#authorize`,
+        : `http://b77ix-eeaaa-aaaaa-qaada-cai.localhost:4943/#authorize`,
   },
 };
 

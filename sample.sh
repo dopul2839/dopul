@@ -101,6 +101,8 @@ dfx canister call icrc1_ledger_canister icrc1_transfer "(record { to = record { 
 dfx canister call icrc1_ledger_canister icrc1_balance_of "(record {owner = principal \"${USER2}\";})"
 echo "Minting Gold NFT 1 to User 1"
 dfx canister call dg_su_nft_canister mintGoldNFT "(principal \"${USER1}\", vec { record { purpose = variant { Preview }; key_val_data = vec { record { key = \"description\"; val = variant { TextContent = \"Gold NFT 1\" } } }; data = blob \"\"; } }, 1, \"99.99%\")"
+# dfx canister call dg_su_nft_canister mintGoldNFT "(principal \"sri5u-35qtg-ku5ia-wegbk-yrsun-b3nd4-f3gby-mxakf-pmxzq-urhzt-eqe\", vec { record { purpose = variant { Preview }; key_val_data = vec { record { key = \"description\"; val = variant { TextContent = \"Gold NFT 1\" } } }; data = blob \"\"; } }, 1, \"99.99%\")"
+# sri5u-35qtg-ku5ia-wegbk-yrsun-b3nd4-f3gby-mxakf-pmxzq-urhzt-eqe
 echo "Minting Gold NFT 2 to User 2"
 dfx canister call dg_su_nft_canister mintGoldNFT "(principal \"${USER2}\", vec { record { purpose = variant { Preview }; key_val_data = vec { record { key = \"description\"; val = variant { TextContent = \"Gold NFT 2\" } } }; data = blob \"\"; } }, 1, \"99.99%\")"
 
@@ -126,5 +128,11 @@ echo "Updated User 1 Gold Reserves"
 dfx canister call dg_su_nft_canister getIndividualGoldg "(principal \"${USER1}\")"
 echo "Updated User 2 Gold Reserves"
 dfx canister call dg_su_nft_canister getIndividualGoldg "(principal \"${USER2}\")"
+
+echo "Deploying Internet Identity..."
+dfx deploy internet_identity
+
+echo "Deploying the frontend..."
+dfx deploy icrc1_ledger_canister_frontend
 
 echo "Script execution completed."

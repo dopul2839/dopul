@@ -4,18 +4,21 @@ const PlugConnection = ({ onConnect }) => {
   const [isConnected, setIsConnected] = useState(false);
   const [publicKey, setPublicKey] = useState("");
 
-  const nnsCanisterId = "qoctq-giaaa-aaaaa-aaaea-cai"; // Example canister ID
+  const nnsCanisterId = "bw4dl-smaaa-aaaaa-qaacq-cai";
   const whitelist = [nnsCanisterId];
-  const host = "https://mainnet.dfinity.network";
+  const host = "b77ix-eeaaa-aaaaa-qaada-cai.localhost:4943";
+  const onConnectionUpdate = () => {
+    console.log(window.ic.plug.sessionManager.sessionData);
+    // principal
+    console.log(window.ic.plug.principalId);
+  };
 
   const connectToPlug = async () => {
     try {
-      const publicKey = await window.ic.plug.requestConnect({
+      const publicKey = await window.ic?.plug?.requestConnect({
         whitelist,
         host,
-        onConnectionUpdate: () => {
-          console.log(window.ic.plug.sessionManager.sessionData);
-        },
+        onConnectionUpdate,
         timeout: 50000,
       });
       setPublicKey(publicKey);
@@ -30,16 +33,20 @@ const PlugConnection = ({ onConnect }) => {
   };
 
   const verifyConnection = async () => {
-    const connected = await window.ic.plug.isConnected();
+    console.log("Verifying connection to Plug");
+    const connected = await window.ic?.plug?.isConnected();
     if (!connected) {
-      await connectToPlug();
+      console.log("Not connected to Plug");
+      await window.ic.plug.requestConnect({ whitelist, host });
     } else {
+      console.log("Connected to Plug");
       setIsConnected(true);
     }
   };
 
   useEffect(() => {
-    verifyConnection();
+    console.log("Checking connection to Plug");
+    // verifyConnection();
   }, []);
 
   return (

@@ -29,6 +29,14 @@ export default defineConfig({
     react(),
     environment("all", { prefix: "CANISTER_" }),
     environment("all", { prefix: "DFX_" }),
+    {
+      name: "env-variables",
+      config: () => ({
+        define: {
+          "process.env": process.env,
+        },
+      }),
+    },
   ],
   resolve: {
     alias: [

@@ -334,7 +334,7 @@ actor DGSuCanister {
 
   public shared query (msg) func whoami() : async Principal {
     Debug.print("Caller: " # Principal.toText(msg.caller));
-    msg.caller
+    return msg.caller
   };
 
   public query ({caller}) func whoami2() : async Principal {

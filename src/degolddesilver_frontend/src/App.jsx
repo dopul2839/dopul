@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { icrc1_ledger_canister_backend } from "declarations/icrc1_ledger_canister_backend";
 import { Principal } from "@dfinity/principal";
+import { idlFactory } from "declarations/icrc1_ledger_canister_backend";
 import { AuthClient } from "@dfinity/auth-client";
-
-import React from "react";
 import LoggedOut from "./LoggedOut";
 import { useAuth, AuthProvider } from "./use-auth-client";
 import "./assets/main.css";
 import LoggedIn from "./LoggedIn";
 import PlugConnection from "./PlugConnection";
+import { Actor, HttpAgent } from "@dfinity/agent";
 
 function App() {
-  const { isAuthenticated, identity } = useAuth();
+  const { isAuthenticated } = useAuth();
   const [tokenName, setTokenName] = useState("");
   const [tokenSymbol, setTokenSymbol] = useState("");
   const [tokenDecimals, setTokenDecimals] = useState("");
@@ -21,6 +21,57 @@ function App() {
   const [canprincipal, setCanprincipal] = useState("");
   const [loggedInPrincipal, setLoggedInPrincipal] = useState("");
   const [loggedInPrincipal2, setLoggedInPrincipal2] = useState("");
+  const [plugPublicKey, setPlugPublicKey] = useState("");
+  const [infinityWalletPublicKey, setInfinityWalletPublicKey] = useState("");
+  const [infinityWalletPrincipal, setInfinityWalletPrincipal] = useState("");
+  const [actor, setActor] = useState(null);
+  const [transferAmount, setTransferAmount] = useState("");
+  const [recipientPrincipal, setRecipientPrincipal] = useState("");
+
+  // Handler for creating a new actor
+  const createActor = async () => {
+    console.log("env", process.env);
+
+    let agent = new HttpAgent();
+    if (process.env.DFX_NETWORK !== "ic") {
+      agent.fetchRootKey().catch((err) => {
+        console.warn(
+          "Unable to fetch root key. Ensure that you're running the replica."
+        );
+        console.error(err);
+      });
+    }
+    const newActor = Actor.createActor(idlFactory, {
+      canisterId: process.env.CANISTER_ID_ICRC1_LEDGER_CANISTER_BACKEND,
+      agent,
+    });
+    console.log(newActor);
+    setActor(newActor);
+  };
+
+  // Handler for transferring tokens
+  const transferTokens = async (event) => {
+    event.preventDefault();
+    if (!actor) {
+      console.error("Actor is not created yet.");
+      return;
+    }
+    try {
+      const recipient = Principal.fromText(recipientPrincipal);
+      const amount = BigInt(transferAmount) * BigInt(100000000); // Adjust for decimals
+      const result = await actor.transfer2({
+        toAccount: {
+          owner: recipient,
+          subaccount: [], // If subaccount is required, provide the correct value
+        },
+        amount: amount,
+        toSubaccount: [], // If subaccount is required, provide the correct value
+      });
+      console.log("Transfer result:", result);
+    } catch (error) {
+      console.error("Error transferring tokens:", error);
+    }
+  };
 
   // Handler for fetching token name
   function fetchTokenName(event) {
@@ -86,27 +137,115 @@ function App() {
   function fetchCanprincipal(event) {
     event.preventDefault();
     icrc1_ledger_canister_backend.getPrincipal().then((canprincipal) => {
-      setCanprincipal(canprincipal.toText());
+      let canprincipal2 = Principal.from(canprincipal);
+      setCanprincipal(canprincipal2.toText());
     });
   }
 
-  function fetchLoggedInPrincipal(event) {
-    event.preventDefault();
-    icrc1_ledger_canister_backend.whoami().then((loggedInPrincipal) => {
-      console.log(loggedInPrincipal);
-      console.log(loggedInPrincipal.toString());
-      setLoggedInPrincipal(loggedInPrincipal.toString());
-    });
-  }
+  // function fetchLoggedInPrincipal(event) {
+  //   event.preventDefault();
+  //   icrc1_ledger_canister_backend.whoami().then((loggedInPrincipal) => {
+  //     let loggedInPrincipal2 = Principal.from(loggedInPrincipal);
+  //     setLoggedInPrincipal(loggedInPrincipal2.toText());
+  //   });
+  // }
 
-  function fetchLoggedInPrincipal2(event) {
-    event.preventDefault();
-    icrc1_ledger_canister_backend.whoami2().then((loggedInPrincipal2) => {
-      console.log(loggedInPrincipal2);
-      console.log(loggedInPrincipal2.toText());
-      setLoggedInPrincipal2(loggedInPrincipal2.toText());
-    });
-  }
+  // function fetchLoggedInPrincipal2(event) {
+  //   event.preventDefault();
+  //   icrc1_ledger_canister_backend.whoami2().then((loggedInPrincipal2) => {
+  //     console.log(loggedInPrincipal2);
+  //     console.log(loggedInPrincipal2.toText());
+  //     setLoggedInPrincipal2(loggedInPrincipal2.toText());
+  //   });
+  // }
+  // const handlePlugConnect = (plugPublicKey) => {
+  //   console.log("Inside handlePlugConnect function");
+  //   console.log("plugPublicKey", plugPublicKey);
+  //   setPlugPublicKey(plugPublicKey);
+  // };
+
+  // // Handler for connecting to InfinityWallet
+  // const connectToInfinityWallet = async () => {
+  //   try {
+  //     if (window.ic && window.ic.infinityWallet) {
+  //       const publicKey = await window.ic?.infinityWallet?.requestConnect({
+  //         whitelist: [
+  //           "b77ix-eeaaa-aaaaa-qaada-cai",
+  //           "bw4dl-smaaa-aaaaa-qaacq-cai",
+  //           "be2us-64aaa-aaaaa-qaabq-cai",
+  //           "bkyz2-fmaaa-aaaaa-qaaaq-cai",
+  //           "br5f7-7uaaa-aaaaa-qaaca-cai",
+  //         ], // Add your canister IDs here if needed
+  //         timeout: 50000,
+  //       });
+  //       console.log(`The connected user's public key is:`, publicKey);
+  //       setInfinityWalletPublicKey(publicKey);
+  //     } else {
+  //       console.log("InfinityWallet is not available");
+  //     }
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  // };
+
+  // // Handler for fetching InfinityWallet Principal
+  // const fetchInfinityWalletPrincipal = async () => {
+  //   try {
+  //     if (window.ic && window.ic.infinityWallet) {
+  //       const principalId = await window.ic?.infinityWallet?.getPrincipal();
+  //       console.log(`InfinityWallet's user principal Id is ${principalId}`);
+  //       setInfinityWalletPrincipal(principalId);
+  //     } else {
+  //       console.log("InfinityWallet is not available");
+  //     }
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  // };
+
+  // Handler for logging in using Internet Identity
+  const useLogin = async () => {
+    try {
+      const authClient = await AuthClient.create();
+      authClient.login({
+        maxTimeToLive: BigInt(60 * 60 * 24 * 365 * 1000000000),
+        onSuccess: async () => {
+          handleAuthenticated(authClient);
+        },
+        identityProvider:
+          process.env.DFX_NETWORK === "ic"
+            ? "https://identity.ic0.app/#authorize"
+            : `http://${process.env.CANISTER_ID_INTERNET_IDENTITY}.localhost:4943`,
+      });
+      const handleAuthenticated = () => {
+        console.log(
+          "My principal is",
+          authClient.getIdentity().getPrincipal().toString()
+        );
+      };
+      const identity = await authClient.getIdentity();
+      console.log(identity);
+      console.log("My principal is", identity.getPrincipal().toString());
+      const agent = new HttpAgent({ identity });
+      if (process.env.DFX_NETWORK !== "ic") {
+        agent.fetchRootKey().catch((err) => {
+          console.warn(
+            "Unable to fetch root key. Ensure that you're running the replica."
+          );
+          console.error(err);
+        });
+      }
+
+      const actor = Actor.createActor(idlFactory, {
+        agent,
+        canisterId: process.env.CANISTER_ID_ICRC1_LEDGER_CANISTER_BACKEND,
+      });
+      let principal = await actor.getPrincipal();
+      console.log(principal.toString());
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   return (
     <>
@@ -131,8 +270,18 @@ function App() {
         </section>
       </header>
       <main id="pageContent">
-        {isAuthenticated ? <LoggedIn /> : <LoggedOut />}
-        <img src="/logo2.svg" alt="DFINITY logo" />
+        {/*Login button*/}
+        <button onClick={useLogin}>Login</button>
+        {/*Logout button*/}
+        <button onClick={createActor}>Create Actor</button>{" "}
+        {/* Add button to create actor */}
+        {/* <PlugConnection onConnect={handlePlugConnect} />
+        {isAuthenticated ? <LoggedIn /> : <LoggedOut />} */}
+        <img
+          src="/DGoldSilverLogo.png"
+          alt="DGold DSilver logo"
+          className="logo-image"
+        />
         <br />
         <br />
         <br />
@@ -168,7 +317,7 @@ function App() {
         <button onClick={fetchCanprincipal}>Fetch Canister Principal</button>
         <section id="canprincipal">Canister Principal: {canprincipal}</section>
         <br />
-        <br />
+        {/* <br />
         <button onClick={fetchLoggedInPrincipal}>
           Fetch Logged In Principal
         </button>
@@ -183,6 +332,45 @@ function App() {
         <section id="loggedInPrincipal2">
           Logged In Principal: {loggedInPrincipal2}
         </section>
+        <br />
+        <button onClick={connectToInfinityWallet}>
+          Connect to InfinityWallet
+        </button>
+        <section id="infinityWalletPublicKey">
+          InfinityWallet Public Key: {infinityWalletPublicKey}
+        </section>
+        <br />
+        <button onClick={fetchInfinityWalletPrincipal}>
+          Fetch InfinityWallet Principal
+        </button>
+        <section id="infinityWalletPrincipal">
+          InfinityWallet Principal: {infinityWalletPrincipal}
+        </section>
+        <br /> */}
+        {"\n"}
+        <form action="#" onSubmit={transferTokens}>
+          <></>
+          <label htmlFor="recipientPrincipal">
+            Recipient Principal: &nbsp;
+          </label>
+          <input
+            id="recipientPrincipal"
+            alt="recipientPrincipal"
+            type="text"
+            onChange={(e) => setRecipientPrincipal(e.target.value)}
+          />
+          {"\n"}
+
+          <label htmlFor="transferAmount">Amount to Transfer: &nbsp;</label>
+
+          <input
+            id="transferAmount"
+            alt="transferAmount"
+            type="number"
+            onChange={(e) => setTransferAmount(e.target.value)}
+          />
+          <button type="submit">Transfer Tokens</button>
+        </form>
       </main>
     </>
   );

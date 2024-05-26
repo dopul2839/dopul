@@ -31,6 +31,13 @@ body {
   width: 100vw;
 }
 
+.logo-image {
+  width: 333px; /* Adjust to desired size */
+  height: 333px; /* Ensures the image is square */
+  border-radius: 15px; /* Adjust to desired roundness */
+  object-fit: cover; /* Ensures the image covers the area without stretching */
+}
+
 p {
   line-height: 22px;
   color: var(--grey-700);
@@ -89,9 +96,11 @@ p {
 
 button {
   border: 1px solid var(--grey-200);
+  align-self: center; /* Center the button horizontally */
+
   background: var(--background-color);
   display: flex;
-  width: 100%;
+  width: 33%;
   text-align: center;
   justify-content: center;
   margin-bottom: 1rem;
@@ -112,9 +121,9 @@ a:focus {
 }
 
 img {
-  min-width: 500px;
+  min-width: 200px;
   width: 50vw;
-  max-width: 800px;
+  max-width: 200px;
   display: block;
   margin: auto;
 }
@@ -124,14 +133,21 @@ ul {
   padding: 0;
 }
 
-form,
 label {
   display: flex;
 }
 
 form {
-  margin-bottom: 2rem;
+  display: flex;
   flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem; /* Optional: Adds space between elements */
+}
+
+label,
+input,
+button {
+  width: 33%;
 }
 
 button.primary {
