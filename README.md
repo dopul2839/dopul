@@ -2,6 +2,9 @@
 
 ## Blockhack Devpost 2024
 
+## [Project Documentation](https://github.com/apatel2582/DGoldDSilverICP/raw/main/Project_DGold_DSilver_v1_3.pdf)
+
+
 ## Overview
 
 The DGold DSilver project aims to create value NFTs representing gold and silver reserves. This project will allow users to mint, validate, and transfer these NFTs securely using the Internet Computer Protocol (ICP) blockchain. Additionally, users can stake their NFTs for monthly rewards in DGSu tokens and participate in a DEX to exchange DGSU tokens for other cryptocurrencies like ICP, ADA, SOL, Bitcoin, or USDT.
