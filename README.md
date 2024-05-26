@@ -58,8 +58,8 @@ The DGold DSilver project aims to create value NFTs representing gold and silver
 To start the environment and execute the project setup, clone the repository, give execution permissions to the script, and run it:
 
 ```bash
-git clone <repository-url>
-cd <repository-directory>
+git clone https://github.com/apatel2582/DGoldDSilverICP.git
+cd DGoldDSilverICP/
 chmod +x sample.sh
 ./sample.sh
 ```
