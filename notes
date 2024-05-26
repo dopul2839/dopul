@@ -1,0 +1,81 @@
+dfx deploy icrc1_ledger_canister --argument "(variant {Init =
+record {
+     token_symbol = \"${TOKEN_SYMBOL}\";
+     token_name = \"${TOKEN_NAME}\";
+     minting_account = record { owner = principal \"${MINTER}\" };
+     transfer_fee = ${TRANSFER_FEE};
+     metadata = vec {};
+     feature_flags = opt record{icrc2 = ${FEATURE_FLAGS}};
+     initial_balances = vec { record { record { owner = principal \"${DEFAULT}\"; }; ${PRE_MINTED_TOKENS}; }; };
+     archive_options = record {
+         num_blocks_to_archive = ${NUM_OF_BLOCK_TO_ARCHIVE};
+         trigger_threshold = ${TRIGGER_THRESHOLD};
+         controller_id = principal \"${ARCHIVE_CONTROLLER}\";
+         cycles_for_archive_creation = opt ${CYCLE_FOR_ARCHIVE_CREATION};
+     };
+ }
+})"
+
+dfx canister call icrc1_ledger_canister icrc1_transfer "(record { to = record { owner = principal \"gd2se-lx576-tcsjq-em5b2-xrwqk-zck7h-lz77x-lsee5-53ezk-74zzv-dae\";};  amount = 10_000_000;})"
+
+
+dfx canister call icrc1_ledger_canister icrc1_balance_of "(record {owner = principal \"gd2se-lx576-tcsjq-em5b2-xrwqk-zck7h-lz77x-lsee5-53ezk-74zzv-dae\"; })"
+
+dfx canister call icrc1_ledger_canister icrc1_transfer "(record { to = record { owner = principal \"be2us-64aaa-aaaaa-qaabq-cai\";};  amount = 10_000_000;})"
+Please enter the passphrase for your identity: [hidden]
+Decryption complete.
+(variant { Ok = 1 : nat })
+
+
+dfx canister call icrc1_ledger_canister icrc1_balance_of '(record { owner = principal "be2us-64aaa-aaaaa-qaabq-cai"; subaccount = null })'
+Please enter the passphrase for your identity: [hidden]
+Decryption complete.
+(10_000_000 : nat)
+
+dfx canister call icrc1_ledger_canister_backend transfer2 '(record { amount = 100_000; toAccount = record { owner = principal "7w6a5-g6oxk-vsx4o-2evos-zmc6v-4yree-wrm4g-nsmob-pyc2j-mh77x-cqe"; subaccount = null; }})'
+Please enter the passphrase for your identity: [hidden]
+Decryption complete.
+2024-05-24 00:26:10.430556744 UTC: [Canister be2us-64aaa-aaaaa-qaabq-cai] Transferring 100_000 tokens to principal {owner = 7w6a5-g6oxk-vsx4o-2evos-zmc6v-4yree-wrm4g-nsmob-pyc2j-mh77x-cqe; subaccount = null} subaccount null
+(variant { ok = 2 : nat })
+
+dfx canister call icrc1_ledger_canister icrc1_balance_of '(record { owner = principal "7w6a5-g6oxk-vsx4o-2evos-zmc6v-4yree-wrm4g-nsmob-pyc2j-mh77x-cqe"; subaccount = null })'
+Please enter the passphrase for your identity: [hidden]
+Decryption complete.
+(100_000 : nat)
+
+
+ dfx ledger account-id --of-canister icrc1_ledger_canister_backend
+
+ dfx start --background --clean
+
+
+
+dfx deploy dg_su_nft_canister --argument "(                                                 
+  principal\"$(dfx identity get-principal)\", 
+  record {
+    logo = record {
+      logo_type = \"image/png\";
+      data = \"BASE64_IMAGE_DATA\";
+    };
+    name = \"DeGoldSilver\";
+    symbol = \"DGLSL\";
+    maxLimit = 20;
+  }
+)"
+
+ dfx canister call dg_su_nft_canister mintGoldNFT '(                                         
+  principal "gd2se-lx576-tcsjq-em5b2-xrwqk-zck7h-lz77x-lsee5-53ezk-74zzv-dae",
+  vec {
+    record {
+      purpose = variant { Preview };
+      key_val_data = vec {
+        record { key = "description"; val = variant { TextContent = "Gold NFT" } }
+      };                    
+      data = blob "";
+    }             
+  },
+  1,  // weight in grams
+  "99.99%"  // purity
+)'
+
+

@@ -1,18 +1,9 @@
 {
   "canisters": {
     "icrc1_ledger_canister_backend": {
-      "main": "src/icrc1_ledger_canister_backend/main.mo",
-      "type": "motoko"
-    },
-    "icrc1_ledger_canister_frontend": {
-      "dependencies": [
-        "icrc1_ledger_canister_backend"
-      ],
-      "source": [
-        "src/icrc1_ledger_canister_frontend/dist"
-      ],
-      "type": "assets",
-      "workspace": "icrc1_ledger_canister_frontend"
+      "main": "src/degolddesilver_backend/main.mo",
+      "type": "motoko",
+      "dependencies": ["icrc1_ledger_canister"]
     },
     "internet_identity": {
       "candid": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity.did",
@@ -24,6 +15,22 @@
       },
       "type": "custom",
       "wasm": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity_dev.wasm.gz"
+    },
+    "icrc1_ledger_canister": {
+      "type": "custom",
+      "candid": "https://raw.githubusercontent.com/dfinity/ic/b6b2ef469bb00d38b48b789cae91251f27011b82/rs/rosetta-api/icrc1/ledger/ledger.did",
+      "wasm": "https://download.dfinity.systems/ic/b6b2ef469bb00d38b48b789cae91251f27011b82/canisters/ic-icrc1-ledger.wasm.gz"
+    },
+    "dg_su_nft_canister": {
+      "main": "src/degolddesilver_backend/nft.mo",
+      "type": "motoko",
+      "dependencies": ["icrc1_ledger_canister_backend"]
+    },
+    "icrc1_ledger_canister_frontend": {
+      "dependencies": ["dg_su_nft_canister"],
+      "source": ["src/degolddesilver_frontend/dist"],
+      "type": "assets",
+      "workspace": "degolddesilver_frontend"
     }
   },
   "defaults": {
