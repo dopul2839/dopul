@@ -132,6 +132,13 @@ dfx canister call dg_su_nft_canister getIndividualGoldg "(principal \"${USER2}\"
 echo "Deploying Internet Identity..."
 dfx deploy internet_identity
 
+echo "Installing TypeScript locally for frontend..."
+cd src/degolddesilver_frontend
+npm install --save-dev typescript
+cd ..
+cd ..
+
+
 echo "Deploying the frontend..."
 dfx deploy icrc1_ledger_canister_frontend
 

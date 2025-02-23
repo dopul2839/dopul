@@ -2,8 +2,7 @@
 
 ## Blockhack Devpost 2024
 
-## [Project Documentation](https://github.com/apatel2582/DGoldDSilverICP/raw/main/Project_DGold_DSilver_v1_3.pdf)
-
+## [Project Documentation](https://github.com/dopul2839/dopul/raw/main/Project_DGold_DSilver_v1_3.pdf)
 
 ## Overview
 
@@ -58,11 +57,13 @@ The DGold DSilver project aims to create value NFTs representing gold and silver
 
 ## Script Execution
 
+Make sure you have DFX installed on your system.
+
 To start the environment and execute the project setup, clone the repository, give execution permissions to the script, and run it:
 
 ```bash
-git clone https://github.com/apatel2582/DGoldDSilverICP.git
-cd DGoldDSilverICP/
+git clone https://github.com/dopul2839/dopul.git
+cd dopul/
 chmod +x sample.sh
 ./sample.sh
 ```

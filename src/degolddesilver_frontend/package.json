@@ -7,7 +7,7 @@
     "setup": "npm i && dfx canister create icrc1_ledger_canister_backend && dfx generate icrc1_ledger_canister_backend && dfx deploy",
     "start": "vite --port 3000",
     "prebuild": "dfx generate",
-    "build": "tsc && vite build",
+    "build": "npx tsc && vite build",
     "format": "prettier --write \"src/**/*.{json,js,jsx,ts,tsx,css,scss}\""
   },
   "dependencies": {
